@@ -16,8 +16,8 @@ Library5=mwadmobinterstitial2 (2)
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: Root Checker
-	#VersionCode: 1
-	#VersionName: 1.0
+	#VersionCode: 2
+	#VersionName: 1.1
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
@@ -140,7 +140,7 @@ ivno.Visible = False
 		lf.Text = "Developed By Khun Htetz Naing"
 		lf.Gravity = Gravity.CENTER
 		lf.TextColor = Colors.Blue
-		Activity.AddView(lf,0%x,100%y - 130dip,100%x,10%y)
+		Activity.AddView(lf,0%x,100%y - 130dip,100%x,15%y)
 End Sub
 
 Sub imv_Click
