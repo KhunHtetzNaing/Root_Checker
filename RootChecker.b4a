@@ -1,0 +1,218 @@
+﻿Version=6.3
+NumberOfModules=0
+Build1=Default,com.htetznaing.rootchecker
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="19"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~'AdMob~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.version"~\n~  android:value="@integer/google_play_services_version"/>~\n~<activity android:name="com.google.android.gms.ads.AdActivity"~\n~  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>~\n~~\n~)~\n~'End of AdMob
+IconFile=
+NumberOfFiles=3
+File1=icon.png
+File2=no.png
+File3=yes.png
+NumberOfLibraries=5
+Library1=core
+Library2=mlfiles
+Library3=phone
+Library4=admob
+Library5=mwadmobinterstitial2 (2)
+@EndOfDesignText@
+#Region  Project Attributes 
+	#ApplicationLabel: Root Checker
+	#VersionCode: 1
+	#VersionName: 1.0
+	'SupportedOrientations possible values: unspecified, landscape or portrait.
+	#SupportedOrientations: unspecified
+	#CanInstallToExternalStorage: False
+	#AdditionalRes: D:\Android\android-sdk\extras\google\google-play-services\libproject\google-play-services_lib\res, com.google.android.gms
+	#End Region
+
+#Region  Activity Attributes 
+	#FullScreen: False
+	#IncludeTitle: True
+#End Region
+
+Sub Process_Globals
+	'These global variables will be declared once when the application starts.
+	'These variables can be accessed from all modules.
+Dim t1,t2 As Timer
+End Sub
+
+Sub Globals
+Dim About As Label
+Dim ml As MLfiles
+Dim b As Button
+Dim p As Phone
+Dim OS As String
+Dim ivno,ivyes As ImageView
+Dim imv As ImageView
+	Dim yes,no As Label
+	Dim banner As AdView
+	Dim interstitial As mwAdmobInterstitial
+	Dim lf As Label
+End Sub
+
+Sub Activity_Create(FirstTime As Boolean)
+	If p.SdkVersion > 19 Then
+		banner.Initialize("banner","ca-app-pub-4173348573252986/6102038158")
+		banner.LoadAd
+		Activity.AddView(banner,0%x,100%y - 50dip,100%x,50dip)
+		
+		interstitial.Initialize("interstitial","ca-app-pub-4173348573252986/1532237754")
+		interstitial.LoadAd
+		
+		t1.Initialize("t1",100)
+		t1.Enabled = False
+		
+		t2.Initialize("t2",30000)
+		t2.Enabled = True
+	End If
+	Activity.Color = Colors.White
+Select p.SdkVersion
+   Case 2 : OS = "1.1"
+   Case 3 : OS = "1.5"
+   Case 4 : OS = "1.6"
+   Case 5 : OS = "2.0"
+   Case 6 : OS = "2.0.1"
+   Case 7 : OS = "2.1"
+   Case 8 : OS = "2.2"
+   Case 9 : OS = "2.3 - 2.3.2"
+   Case 10 : OS = "	2.3.3 - 2.3.7" ' 2.3.3 or 2.3.4
+   Case 11 : OS = "3.0"
+   Case 12 : OS = "3.1"
+   Case 13 : OS = "3.2"
+   	Case 14 : OS = "	4.0.1 - 4.0.2"
+		Case 15 : OS = "4.0.3 - 4.0.4"
+			Case 16 : OS = "	4.1.x"
+				Case 17 : OS = "	4.2.x"
+					Case 18 : OS = 	"4.3.x"
+						Case 19 : OS = "	4.4 - 4.4.4"
+							Case 21: OS = "5.0"
+								Case 22: OS = "5.1"
+									Case 23: OS = "6.0"
+										Case 24 : OS = "	7.0"
+											Case 25 : OS = "	7.1"
+								   Case Else : OS = "?"
+End Select
+
+imv.Initialize("imv")
+imv.Bitmap = LoadBitmap(File.DirAssets,"icon.png")
+imv.Gravity = Gravity.FILL
+Activity.AddView(imv,50%x - 50dip,10dip, 100dip, 100dip)
+
+About.Initialize("")
+About.Text = "Brand Name : " & p.Manufacturer & CRLF & CRLF & "Device Name : " & p.Model & CRLF & CRLF & "Androide Version : " & OS
+Activity.AddView(About,0%x,(imv.Height+imv.Top),100%x,120dip)
+About.Gravity = Gravity.CENTER
+About.TextColor = Colors.Black
+
+Dim bbg As ColorDrawable
+bbg.Initialize(Colors.Black,10)
+b.Initialize("b")
+b.Background = bbg
+b.Text = "#Verify Root Status"
+Activity.AddView(b,20%x,(About.Top+About.Height),60%x,50dip)
+
+ivyes.Initialize("ivyes")
+ivyes.Bitmap = LoadBitmap(File.DirAssets,"yes.png")
+ivyes.Gravity = Gravity.FILL
+Activity.AddView(ivyes,50%x - 30dip  , (About.Top+About.Height),  60dip  ,  60dip )
+ivyes.Visible = False
+
+ivno.Initialize("ivno")
+ivno.Bitmap = LoadBitmap(File.DirAssets,"no.png")
+ivno.Gravity = Gravity.FILL
+Activity.AddView(ivno,50%x - 30dip , (About.Top+About.Height), 60dip, 60dip)
+ivno.Visible = False
+
+		yes.Initialize("yes")
+		yes.Text = "Congratulations :)" &CRLF& "Root Access is Properly Installed on Your Device!"
+		yes.Gravity = Gravity.CENTER
+		yes.TextColor = Colors.Green
+		Activity.AddView(yes,0%x,(ivyes.Top+ivyes.Height)+2%y,100%x,10%y)
+		yes.Visible = False
+		
+		no.Initialize("no")
+		no.Text =  "Sorry :(" &CRLF& "Root Access is Not Properly Installed on Your Device!" &CRLF& "How to Root Your Device ?"
+		no.Gravity = Gravity.CENTER
+		no.TextColor = Colors.Red
+		Activity.AddView(no,0%x,(ivno.Top+ivno.Height)+2%y,100%x,10%y)
+		no.Visible = False
+		
+		lf.Initialize("lf")
+		lf.Text = "Developed By Khun Htetz Naing"
+		lf.Gravity = Gravity.CENTER
+		lf.TextColor = Colors.Blue
+		Activity.AddView(lf,0%x,100%y - 130dip,100%x,10%y)
+End Sub
+
+Sub imv_Click
+	If p.SdkVersion > 19 Then
+		t1.Enabled = True
+	End If
+End Sub
+
+Sub b_Click
+		If p.SdkVersion > 19 Then
+		t1.Enabled = True
+	End If
+	ml.GetRoot
+	If ml.HaveRoot Then
+		ivno.Visible = False
+		b.Visible = False
+		no.Visible = False
+		ivyes.Visible = True
+		yes.Visible = True
+		
+		Else
+		
+			ivno.Visible = True
+		b.Visible = False
+		no.Visible = True
+		ivyes.Visible = False
+		yes.Visible = False
+	End If
+	
+End Sub
+
+Sub no_Click
+		If p.SdkVersion > 19 Then
+		t1.Enabled = True
+	End If
+	Dim i As PhoneIntents
+	StartActivity(i.OpenBrowser("https://play.google.com/store/apps/details?id=com.htetznaing.roottools"))
+End Sub
+
+Sub yes_Click
+	If p.SdkVersion > 19 Then
+		t1.Enabled = True
+	End If
+	Dim i As PhoneIntents
+	StartActivity(i.OpenBrowser("https://play.google.com/store/apps/details?id=com.htetznaing.rootchecker"))
+End Sub
+
+Sub t1_Tick
+If interstitial.Status = interstitial.Status_AdReadyToShow Then
+	interstitial.Show
+End If
+
+If interstitial.Status = interstitial.Status_Dismissed Then
+	interstitial.LoadAd
+End If
+t1.Enabled = False
+End Sub
+
+Sub t2_Tick
+	If interstitial.Status = interstitial.Status_AdReadyToShow Then
+	interstitial.Show
+End If
+
+If interstitial.Status = interstitial.Status_Dismissed Then
+	interstitial.LoadAd
+End If
+End Sub
+
+Sub Activity_Resume
+
+End Sub
+
+Sub Activity_Pause (UserClosed As Boolean)
+
+End Sub
