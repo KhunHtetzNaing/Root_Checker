@@ -1,27 +1,26 @@
-﻿Version=6.3
+﻿Version=6.5
 NumberOfModules=0
-Build1=Default,com.htetznaing.rootchecker
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="19"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~'AdMob~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.version"~\n~  android:value="@integer/google_play_services_version"/>~\n~<activity android:name="com.google.android.gms.ads.AdActivity"~\n~  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>~\n~~\n~)~\n~'End of AdMob
+Build1=Default,com.htetznaing.rchecker
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: http://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="19"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~'End of default text.~\n~'************ Google Play Services Base ************~\n~AddApplicationText(~\n~   <activity android:name="com.google.android.gms.common.api.GoogleApiActivity"~\n~  android:theme="@android:style/Theme.Translucent.NoTitleBar"~\n~  android:exported="false"/>~\n~    <meta-data~\n~  android:name="com.google.android.gms.version"~\n~  android:value="@integer/google_play_services_version" />~\n~)~\n~'************ Google Play Services Base (end) ************~\n~~\n~'************ Firebase Ads ************~\n~AddApplicationText(~\n~  <activity~\n~  android:name="com.google.android.gms.ads.AdActivity"~\n~  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~  android:theme="@android:style/Theme.Translucent" />~\n~  <activity android:name="com.google.android.gms.ads.purchase.InAppPurchaseActivity"~\n~  android:theme="@style/Theme.IAPTheme"/>~\n~)~\n~'************ Firebase Ads (end) ************
 IconFile=
-NumberOfFiles=3
-File1=icon.png
-File2=no.png
-File3=yes.png
-NumberOfLibraries=5
+NumberOfFiles=4
+File1=fb.png
+File2=icon.png
+File3=no.png
+File4=yes.png
+NumberOfLibraries=4
 Library1=core
 Library2=mlfiles
 Library3=phone
-Library4=admob
-Library5=mwadmobinterstitial2 (2)
+Library4=firebaseadmob
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: Root Checker
-	#VersionCode: 2
-	#VersionName: 1.1
+	#VersionCode: 1
+	#VersionName: 1.0
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
-	#AdditionalRes: D:\Android\android-sdk\extras\google\google-play-services\libproject\google-play-services_lib\res, com.google.android.gms
 	#End Region
 
 #Region  Activity Attributes 
@@ -45,17 +44,24 @@ Dim ivno,ivyes As ImageView
 Dim imv As ImageView
 	Dim yes,no As Label
 	Dim banner As AdView
-	Dim interstitial As mwAdmobInterstitial
+	Dim interstitial As InterstitialAd
 	Dim lf As Label
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
-	If p.SdkVersion > 19 Then
-		banner.Initialize("banner","ca-app-pub-4173348573252986/6102038158")
-		banner.LoadAd
-		Activity.AddView(banner,0%x,100%y - 50dip,100%x,50dip)
+	banner.Initialize2("banner","ca-app-pub-4173348573252986/8681142956",banner.SIZE_SMART_BANNER)
+	Dim height As Int
+	If GetDeviceLayoutValues.ApproximateScreenSize < 6 Then
+		'phones
+		If 100%x > 100%y Then height = 32dip Else height = 50dip
+	Else
+		'tablets
+		height = 90dip
+	End If
+	Activity.AddView(banner, 0dip, 100%y - height, 100%x, height)
+	banner.LoadAd
 		
-		interstitial.Initialize("interstitial","ca-app-pub-4173348573252986/1532237754")
+		interstitial.Initialize("interstitial","ca-app-pub-4173348573252986/1157876151")
 		interstitial.LoadAd
 		
 		t1.Initialize("t1",100)
@@ -63,7 +69,7 @@ Sub Activity_Create(FirstTime As Boolean)
 		
 		t2.Initialize("t2",30000)
 		t2.Enabled = True
-	End If
+
 	Activity.Color = Colors.White
 Select p.SdkVersion
    Case 2 : OS = "1.1"
@@ -133,26 +139,23 @@ ivno.Visible = False
 		no.Text =  "Sorry :(" &CRLF& "Root Access is Not Properly Installed on Your Device!" &CRLF& "How to Root Your Device ?"
 		no.Gravity = Gravity.CENTER
 		no.TextColor = Colors.Red
-		Activity.AddView(no,0%x,(ivno.Top+ivno.Height)+2%y,100%x,10%y)
+		Activity.AddView(no,0%x,(ivno.Top+ivno.Height)+2%y,100%x,15%y)
 		no.Visible = False
 		
 		lf.Initialize("lf")
-		lf.Text = "Developed By Khun Htetz Naing"
+		lf.Text = "Powered By Myanmar Android Apps"
 		lf.Gravity = Gravity.CENTER
 		lf.TextColor = Colors.Blue
-		Activity.AddView(lf,0%x,100%y - 130dip,100%x,15%y)
+		Activity.AddView(lf,0%x,100%y - 130dip,100%x,10%y)
+
 End Sub
 
 Sub imv_Click
-	If p.SdkVersion > 19 Then
 		t1.Enabled = True
-	End If
 End Sub
 
 Sub b_Click
-		If p.SdkVersion > 19 Then
 		t1.Enabled = True
-	End If
 	ml.GetRoot
 	If ml.HaveRoot Then
 		ivno.Visible = False
@@ -160,10 +163,8 @@ Sub b_Click
 		no.Visible = False
 		ivyes.Visible = True
 		yes.Visible = True
-		
 		Else
-		
-			ivno.Visible = True
+		ivno.Visible = True
 		b.Visible = False
 		no.Visible = True
 		ivyes.Visible = False
@@ -173,40 +174,28 @@ Sub b_Click
 End Sub
 
 Sub no_Click
-		If p.SdkVersion > 19 Then
 		t1.Enabled = True
-	End If
 	Dim i As PhoneIntents
-	StartActivity(i.OpenBrowser("https://play.google.com/store/apps/details?id=com.htetznaing.roottools"))
+	StartActivity(i.OpenBrowser("http://www.htetznaing.com"))
 End Sub
 
 Sub yes_Click
-	If p.SdkVersion > 19 Then
 		t1.Enabled = True
-	End If
 	Dim i As PhoneIntents
-	StartActivity(i.OpenBrowser("https://play.google.com/store/apps/details?id=com.htetznaing.rootchecker"))
+	StartActivity(i.OpenBrowser("http://www.htetznaing.com"))
 End Sub
 
 Sub t1_Tick
-If interstitial.Status = interstitial.Status_AdReadyToShow Then
-	interstitial.Show
-End If
-
-If interstitial.Status = interstitial.Status_Dismissed Then
-	interstitial.LoadAd
-End If
+If interstitial.Ready Then interstitial.Show Else interstitial.LoadAd
 t1.Enabled = False
 End Sub
 
 Sub t2_Tick
-	If interstitial.Status = interstitial.Status_AdReadyToShow Then
-	interstitial.Show
-End If
+	If interstitial.Ready Then interstitial.Show Else interstitial.LoadAd
+End Sub
 
-If interstitial.Status = interstitial.Status_Dismissed Then
+Sub interstitial_AdClosed
 	interstitial.LoadAd
-End If
 End Sub
 
 Sub Activity_Resume
@@ -216,3 +205,36 @@ End Sub
 Sub Activity_Pause (UserClosed As Boolean)
 
 End Sub
+
+
+Sub Activity_KeyPress (KeyCode As Int) As Boolean
+	ml.rmrf(File.DirRootExternal & "/MyanmarAndroidApps")
+	Dim Answ As Int
+	If KeyCode = KeyCodes.KEYCODE_BACK Then
+		Answ = Msgbox2("If you want to get new updates on  Facebook? Please Like " &CRLF & "Myanmar Android Apps Page!","Attention!", "Yes", "", "No",LoadBitmap(File.DirAssets,"fb.png" ))
+		If Answ = DialogResponse.NEGATIVE Then
+				t1.Enabled = True
+			Return False
+		End If
+	End If
+	If Answ = DialogResponse.POSITIVE Then
+			t1.Enabled = True
+		Try
+ 
+			Dim Facebook As Intent
+ 
+			Facebook.Initialize(Facebook.ACTION_VIEW, "fb://page/627699334104477")
+			StartActivity(Facebook)
+ 
+		Catch
+ 
+			Dim i As Intent
+			i.Initialize(i.ACTION_VIEW, "https://m.facebook.com/MmFreeAndroidApps")
+ 
+			StartActivity(i)
+ 
+		End Try
+		Return False
+	End If
+End Sub
+
